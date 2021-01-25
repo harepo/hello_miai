@@ -61,10 +61,9 @@ class xiaomi_tts:
             r = self._request.put(url, headers=self._headers,
                                   data=_data, timeout=10, verify=False)
             rjson = json.loads(r.text)
-            if rjson['oid']:
+            if rjson.get('oid') != None:
                 return True
-            else:
-                _LOGGER.error(rjson)
+            _LOGGER.error(rjson)
         except AttributeError as e:
             _LOGGER.warning(e)
         except BaseException as e:
@@ -89,10 +88,9 @@ class xiaomi_tts:
             r = self._request.put(url, headers=self._headers,
                                   data=_data, timeout=10, verify=False)
             rjson = json.loads(r.text)
-            if rjson['properties']:
+            if rjson.get('properties') != None:
                 return True
-            else:
-                _LOGGER.error(rjson)
+            _LOGGER.error(rjson)
         except AttributeError as e:
             _LOGGER.warning(e)
         except BaseException as e:
@@ -113,10 +111,9 @@ class xiaomi_tts:
             r = self._request.put(url, headers=self._headers,
                                   data=_data, timeout=10, verify=False)
             rjson = json.loads(r.text)
-            if rjson['oid']:
+            if rjson.get('oid') != None:
                 return True
-            else:
-                _LOGGER.error(rjson)
+            _LOGGER.error(rjson)
         except AttributeError as e:
             _LOGGER.warning(e)
         except BaseException as e:
@@ -170,6 +167,7 @@ CONFIG_SCHEMA = vol.Schema({
         vol.Required(CONF_USER): cv.string,
         vol.Required(CONF_PASSWORD): cv.string,
         vol.Required(CONF_DEVICEID): cv.string,
+        vol.Optional(CONF_PARAMS): dict,
     }),
 }, extra=vol.ALLOW_EXTRA)
 
@@ -180,6 +178,7 @@ def setup(hass, config):
     token = conf.get(CONF_PASSWORD)
     deviceid = conf.get(CONF_DEVICEID)
     params = conf.get(CONF_PARAMS, {})
+    _LOGGER.debug(params)
 
     client = xiaomi_tts(hass, config, appid, token, deviceid)
     msg_queue = []
@@ -207,7 +206,8 @@ def setup(hass, config):
 
     def send_message(call):
         msg_queue = []
-        iid = call.data.get(ATTR_IID, params['force_send'])
+        default_iid = params.get('force_send', None)
+        iid = call.data.get(ATTR_IID, default_iid)
         message = call.data.get(ATTR_MESSAGE)
 
         if not client._text_to_speech(iid, message):
@@ -216,13 +216,15 @@ def setup(hass, config):
     def add_msg2queue(call):
         wait_time = call.data.get(WAIT_TIME, DEFAULT_WAIT_TIME)
         message = call.data.get(ATTR_MESSAGE)
-        iid = call.data.get(ATTR_IID, params['add2msgqueue'])
+        default_iid = params.get('add2msgqueue', None)
+        iid = call.data.get(ATTR_IID, default_iid)
         msg_queue.append(
             {'msg': message, 'iid': iid, 'wait_time': wait_time})
 
     def player_set_volume(call):
 
-        iid = call.data.get(ATTR_IID, params['set_vol'])
+        default_iid = params.get('set_vol', None)
+        iid = call.data.get(ATTR_IID, default_iid)
         vol = call.data.get(ATTR_VOLUME)
 
         if not client.player_set_volume(iid, int(vol)):
@@ -230,7 +232,8 @@ def setup(hass, config):
 
     def execution_operation(call):
 
-        iid = call.data.get(ATTR_IID, params['execution'])
+        default_iid = params.get('execution', None)
+        iid = call.data.get(ATTR_IID, default_iid)
         operation = call.data.get(ATTR_OPERATION)
         silent = call.data.get(ATTR_SILENT, 'false')
 
