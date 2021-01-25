@@ -1,8 +1,8 @@
 {
-    "domain": "hello_miai",
-    "name": "hello_miai",
-    "documentation": "https://www.example.com",
-    "dependencies": [],
-    "codeowners": [],
-    "requirements": []
-  }
+  "domain": "hello_miai",
+  "name": "hello_miai",
+  "documentation": "https://github.com/harepo/hello_miai",
+  "dependencies": [],
+  "codeowners": [],
+  "requirements": []
+}
