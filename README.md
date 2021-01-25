@@ -17,7 +17,10 @@ hello_miai:
 
   # 可选全局配置 - 此处为协议中对应的 iid 值
   params:
-    { force_send: "5.1", add2msgqueue: "5.1", set_vol: "2.1", execution: "5.5" }
+    force_send: "5.1"
+    add2msgqueue: "5.1"
+    set_vol: "2.1"
+    execution: "5.5"
 
 ```
 
